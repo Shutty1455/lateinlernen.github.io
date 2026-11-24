@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Latein: Rede und Rom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: klar, ruhig, schülertauglich – Lernheft, kein Prunk
+   IDEA: römische Inschriftentafel / Wachstafel – Kapitalis-Titel auf Marmor, pompejanisches Rot
+   PICTURE: das Quiz selbst als große Tafel; in den Portionen Zeitstrahlen und Ablaufleisten
+   COLOUR and TYPE: Marmorweiß, pompejanisch Rot #9b2d20 dominant, Lapisblau #2b4c8c als Akzent; Cinzel + Source Sans 3
+   LAYOUT: Kopfband rot über volle Breite, Navigation als Zeile, eine Spalte bis 900px */
+:root{color-scheme:light dark;
+--bg:light-dark(#fbfaf8,#17120f);--ink:light-dark(#1d1a17,#efe9e3);--soft:light-dark(#5d554d,#b9afa5);
+--red:light-dark(#9b2d20,#c9533f);--redbg:light-dark(#9b2d20,#5e1c14);--card:light-dark(#ffffff,#221b17);
+--line:light-dark(#e4ded7,#3a302a);--blue:light-dark(#2b4c8c,#8fb0ee);--ok:light-dark(#1f6b3a,#7ccf98);--okbg:light-dark(#e6f4ea,#173222);
+--bad:light-dark(#9b2d20,#f08a78);--badbg:light-dark(#fbe9e6,#3a1914)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Source Sans 3",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Cinzel,Georgia,serif;line-height:1.1;text-wrap:balance;margin:0 0 .5em}
+h1{font-size:clamp(30px,5vw,46px);letter-spacing:.02em}
+h2{font-size:clamp(24px,3.4vw,32px);color:var(--red)}
+h3{font-size:19px;margin-top:1.4em}
+header{background:var(--redbg);color:#fff;padding:clamp(24px,4vw,48px) max(5vw,16px) 0}
+header p{margin:.2em 0 1.2em;max-width:62ch;opacity:.92}
+nav{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:0}
+nav a{color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px 8px 0 0;font-weight:600;font-size:15px;min-height:44px;display:flex;align-items:center;background:rgba(255,255,255,.12)}
+nav a[aria-current=true]{background:var(--bg);color:var(--red)}
+nav a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+main{max-width:900px;margin:0 auto;padding:clamp(24px,4vw,48px) max(5vw,16px) 64px}
+section[hidden]{display:none}
+.lead{font-size:18px;color:var(--soft)}
+.plan{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 24px;padding:0;list-style:none}
+.plan li{flex:1 1 180px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card);font-size:15px}
+.plan b{display:block;color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:16px;background:var(--card)}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:14px;color:var(--soft);font-weight:600}
+td:first-child{font-weight:700;white-space:nowrap}
+.tip{border-left:4px solid var(--blue);padding:10px 14px;background:var(--card);margin:16px 0;border-radius:0 8px 8px 0}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;background:var(--card)}
+summary{cursor:pointer;font-weight:600;min-height:28px}
+ol.time{list-style:none;padding:0;margin:12px 0;border-left:3px solid var(--red)}
+ol.time li{position:relative;padding:6px 0 10px 96px}
+ol.time li::before{content:"";position:absolute;left:-8px;top:14px;width:13px;height:13px;border-radius:50%;background:var(--bg);border:3px solid var(--red)}
+ol.time b{position:absolute;left:18px;top:6px;white-space:nowrap;color:var(--red);font-variant-numeric:tabular-nums}
+/* Quiz */
+.tafel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:clamp(18px,3vw,32px);box-shadow:0 10px 30px -18px rgba(60,20,10,.35)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:10px 0 18px}
+.bar i{display:block;height:100%;background:var(--red);transition:width .3s}
+.meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:14px;color:var(--soft)}
+.q{font-size:clamp(19px,2.6vw,23px);font-weight:600;margin:6px 0 16px}
+.opts{display:grid;gap:10px}
+button{font:inherit;cursor:pointer}
+.opt{text-align:left;min-height:52px;padding:12px 16px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--blue)}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+.fb{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
+.btn{min-height:48px;padding:10px 20px;border-radius:10px;border:0;background:var(--red);color:#fff;font-weight:700}
+.btn.alt{background:transparent;color:var(--red);border:2px solid var(--red)}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.score{font-family:Cinzel,serif;font-size:clamp(40px,8vw,64px);color:var(--red);line-height:1}
+.wrong li{margin:6px 0}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+@media(max-width:600px){ol.time li{padding-left:18px;padding-top:30px}ol.time b{top:4px}td:first-child{white-space:normal}
+table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;white-space:normal;font-weight:600;color:var(--soft)}.stack td:empty{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header>
+  <h1>Rede und Rom</h1>
+  <p>Lernheft Latein: Zufallsquiz zu den 12 Stilmitteln, dazu fünf Lernportionen à 15 Minuten.</p>
+  <nav id="nav">
+    <a href="#quiz">Quiz</a>
+    <a href="#p4">4 · Officia I</a>
+    <a href="#p5">5 · Officia II</a>
+    <a href="#p6">6 · Partes</a>
+    <a href="#p7">7 · Cicero</a>
+    <a href="#p8">8 · Rom</a>
+  </nav>
+</header>
+<main>
+
+<section id="quiz">
+  <h2>Stilmittel-Quiz</h2>
+  <p class="lead">36 Fragen, drei pro Stilmittel. Reihenfolge der Fragen und Antworten wird bei jedem Durchgang neu gemischt.</p>
+  <div class="tafel" id="tafel"></div>
+</section>
+
+<section id="p4" hidden>
+  <h2>Portion 4: Die officia oratoris (I)</h2>
+  <p class="lead">Die fünf Arbeitsschritte des Redners – Überblick und die ersten beiden: Finden und Ordnen.</p>
+  <ul class="plan"><li><b>5 Min</b>Tabelle lernen, Merksatz</li><li><b>7 Min</b>Übung: Rede planen</li><li><b>3 Min</b>Selbsttest</li></ul>
+  <table class="stack"><thead><tr><th>Latein</th><th>Deutsch</th><th>Was tue ich?</th></tr></thead><tbody>
+    <tr><td>1. inventio</td><td>Finden</td><td>Klären, worum es geht; alle Gedanken und Ideen zum Thema sammeln.</td></tr>
+    <tr><td>2. dispositio</td><td>Ordnen</td><td>Einfälle ordnen, die stärksten auswählen, schwache weglassen, Gliederung in Stichworten.</td></tr>
+    <tr><td>3. elocutio</td><td>Formulieren</td><td>Sprache ausarbeiten: Wortwahl, Satzlänge, Verstand oder Gefühl, Stilmittel.</td></tr>
+    <tr><td>4. memoria</td><td>Behalten</td><td>Rede einprägen; nur eine Karteikarte mit Stichworten.</td></tr>
+    <tr><td>5. actio / pronuntiatio</td><td>Vortragen</td><td>Tempo, Lautstärke, Pausen, Mimik, Gestik planen und üben.</td></tr>
+  </tbody></table>
+  <div class="tip"><b>Merksatz für die Reihenfolge I – D – E – M – A:</b> „<b>I</b>mmer <b>D</b>enkt <b>E</b>in <b>M</b>ann <b>A</b>n“ – erst denken (finden, ordnen), dann sprechen. Oder einfach: Die Reihenfolge ist die Reihenfolge, in der man wirklich arbeitet – vom leeren Blatt bis zur Bühne.</div>
+
+  <h3>Dispositio genauer: die dreiteilige Gliederung</h3>
+  <table class="stack"><thead><tr><th>Teil</th><th>Aufgabe</th><th>Tipp vom Arbeitsblatt</th></tr></thead><tbody>
+    <tr><td>Einleitung</td><td>Aufmerksamkeit wecken, zum Thema hinführen</td><td>Überraschender, witziger oder besonders interessanter Gedanke</td></tr>
+    <tr><td>Hauptteil</td><td>Thema klar benennen, Argumente vorbringen</td><td>Jedes Argument erklären und mit Beispiel belegen; Steigerung – das stärkste Argument kommt zuletzt; Gegenargumente widerlegen oder abschwächen</td></tr>
+    <tr><td>Schluss</td><td>Meinung zusammenfassen</td><td>Wirkungsvoller Schlusssatz, Zuhörer direkt ansprechen – was am Schluss kommt, bleibt am besten im Gedächtnis</td></tr>
+  </tbody></table>
+
+  <h3>Übung (7 Min)</h3>
+  <p>Thema: <i>„Sollte Latein in der Schule Pflicht bleiben?“</i></p>
+  <ol>
+    <li><b>inventio (3 Min):</b> Schreib so viele Pro- und Contra-Gedanken auf wie möglich – ohne zu bewerten.</li>
+    <li><b>dispositio (4 Min):</b> Streiche die zwei schwächsten. Ordne die übrigen so, dass das stärkste Argument am Ende des Hauptteils steht. Notiere ein Gegenargument, das du widerlegen willst, und eine Idee für den Einstieg.</li>
+  </ol>
+
+  <h3>Selbsttest</h3>
+  <details><summary>Was bedeutet „officia oratoris“?</summary>Die Aufgaben (Pflichten, Arbeitsschritte) des Redners bei der Erarbeitung einer Rede.</details>
+  <details><summary>Nenne die fünf officia auf Latein in der richtigen Reihenfolge.</summary>inventio – dispositio – elocutio – memoria – actio (pronuntiatio)</details>
+  <details><summary>Wo steht im Hauptteil das stärkste Argument – und warum?</summary>Am Schluss des Hauptteils: Die Argumente werden gesteigert (wie bei einer Klimax), damit der stärkste Eindruck hängen bleibt.</details>
+  <details><summary>Was gehört außer den eigenen Argumenten noch in den Hauptteil?</summary>Die Widerlegung oder Abschwächung möglicher Gegenargumente.</details>
+</section>
+
+<section id="p5" hidden>
+  <h2>Portion 5: Die officia oratoris (II)</h2>
+  <p class="lead">Formulieren, Behalten, Vortragen – und wie die Stilmittel hier ins Spiel kommen.</p>
+  <ul class="plan"><li><b>3 Min</b>Wiederholung I–D–E–M–A</li><li><b>5 Min</b>elocutio, memoria, actio</li><li><b>7 Min</b>Übung: 1-Minuten-Rede</li></ul>
+
+  <h3>3. elocutio – Formulieren</h3>
+  <p>Hier entscheidet sich, <i>wie</i> etwas gesagt wird: Welche Wörter? Lange oder kurze, einfache oder komplizierte Sätze? Mehr für den Verstand oder für das Gefühl – oder abwechselnd? Und welche Stilmittel unterstützen die Wirkung?</p>
+  <div class="tip"><b>Verknüpfung:</b> Alle Stilmittel aus dem Quiz gehören zur elocutio. Beispiele für ihre Wirkung in einer Rede:
+    <ul><li><b>Asyndeton / Trikolon</b> („Veni, vidi, vici“): knapp, schnell, entschlossen</li>
+    <li><b>Klimax</b>: Spannung steigt bis zum Höhepunkt</li>
+    <li><b>Anapher</b>: hämmert eine Botschaft ein</li>
+    <li><b>Metapher</b>: macht Abstraktes anschaulich, spricht das Gefühl an</li></ul></div>
+
+  <h3>4. memoria – Behalten</h3>
+  <p>Die Rede einprägen, damit man beim Vortrag kaum auf die Notizen schauen muss. Erlaubt ist nur <b>eine Karteikarte mit Stichworten</b> – kein ausformulierter Text.</p>
+
+  <h3>5. actio / pronuntiatio – Vortragen</h3>
+  <table class="stack"><thead><tr><th>Was planen?</th><th>Fragen</th></tr></thead><tbody>
+    <tr><td>Stimme</td><td>Wann schnell, wann langsam? Wann laut, wann leise? (immer verständlich bleiben)</td></tr>
+    <tr><td>Pausen</td><td>Wo mache ich eine Pause, damit etwas wirkt?</td></tr>
+    <tr><td>Mimik</td><td>Welcher Gesichtsausdruck passt?</td></tr>
+    <tr><td>Gestik</td><td>Welche Bewegungen unterstützen den Vortrag?</td></tr>
+  </tbody></table>
+  <p>Üben am besten vor dem Spiegel oder vor einer Vertrauensperson.</p>
+
+  <h3>Übung (7 Min)</h3>
+  <ol>
+    <li><b>elocutio (3 Min):</b> Formuliere zur Übung aus Portion 4 einen Einstiegssatz und einen Schlusssatz. Bau in jeden mindestens ein Stilmittel ein (z. B. Trikolon, Anapher, Alliteration).</li>
+    <li><b>memoria (1 Min):</b> Schreib deine Gliederung auf eine Karteikarte – nur Stichworte.</li>
+    <li><b>actio (3 Min):</b> Halte die Rede eine Minute lang frei vor dem Spiegel. Plane eine bewusste Pause vor dem stärksten Argument.</li>
+  </ol>
+
+  <h3>Selbsttest</h3>
+  <details><summary>Zu welchem officium gehören die Stilmittel?</summary>Zur elocutio (Formulieren).</details>
+  <details><summary>Welches Hilfsmittel ist beim Vortrag erlaubt?</summary>Eine Karteikarte mit Stichworten.</details>
+  <details><summary>Nenne vier Dinge, die man bei der actio plant.</summary>Tempo, Lautstärke, Pausen, Mimik, Gestik (vier davon reichen).</details>
+  <details><summary>Was ist der Unterschied zwischen dispositio und elocutio?</summary>dispositio legt fest, <i>was in welcher Reihenfolge</i> kommt (Gliederung); elocutio legt fest, <i>wie</i> es sprachlich formuliert wird.</details>
+</section>
+
+<section id="p6" hidden>
+  <h2>Portion 6: Die sechs partes orationis</h2>
+  <p class="lead">Die Teile einer klassischen Gerichtsrede. Sie sind die verfeinerte Form von Einleitung – Hauptteil – Schluss aus der dispositio.</p>
+  <ul class="plan"><li><b>6 Min</b>Tabelle + Merksatz</li><li><b>5 Min</b>Zuordnen üben</li><li><b>4 Min</b>Selbsttest</li></ul>
+  <table class="stack"><thead><tr><th>Pars</th><th>Deutsch</th><th>Aufgabe</th><th>Dreiteilung</th></tr></thead><tbody>
+    <tr><td>1. exordium</td><td>Einleitung</td><td>Zuhörer aufmerksam, aufnahmebereit und wohlwollend machen (<i>captatio benevolentiae</i> = Werben um Wohlwollen)</td><td>Einleitung</td></tr>
+    <tr><td>2. narratio</td><td>Erzählung</td><td>Den Sachverhalt darstellen: Was ist passiert? Kurz, klar, glaubwürdig – und schon im eigenen Sinn gefärbt</td><td>Hauptteil</td></tr>
+    <tr><td>3. partitio (divisio)</td><td>Gliederung</td><td>Ankündigen, worüber man sprechen wird; Streitpunkte benennen</td><td>Hauptteil</td></tr>
+    <tr><td>4. argumentatio (confirmatio)</td><td>Beweisführung</td><td>Eigene Argumente vorbringen und belegen</td><td>Hauptteil</td></tr>
+    <tr><td>5. refutatio (confutatio)</td><td>Widerlegung</td><td>Argumente des Gegners entkräften</td><td>Hauptteil</td></tr>
+    <tr><td>6. peroratio (conclusio)</td><td>Schluss</td><td>Zusammenfassen und an die Gefühle der Zuhörer appellieren</td><td>Schluss</td></tr>
+  </tbody></table>
+  <div class="tip"><b>Merksatz E – N – P – A – R – P:</b> „<b>E</b>in <b>N</b>euer <b>P</b>rätor <b>A</b>rgumentiert <b>R</b>uhig und <b>P</b>räzise.“<br>
+  Logik dahinter: erst Wohlwollen gewinnen → erzählen, was war → sagen, was kommt → beweisen → Gegner widerlegen → Gefühle ansprechen.</div>
+  <div class="tip"><b>Berühmte Ausnahme:</b> Cicero beginnt seine erste Rede gegen Catilina ohne höfliches exordium, direkt mit einem Angriff: <i>„Quo usque tandem abutere, Catilina, patientia nostra?“</i> – „Wie lange noch, Catilina, willst du unsere Geduld missbrauchen?“ Gerade der Bruch mit der Regel macht den Anfang so wirkungsvoll.</div>
+
+  <h3>Übung: Zu welcher pars gehört der Satz?</h3>
+  <p>Erst selbst überlegen, dann aufklappen.</p>
+  <details><summary>„Ich werde zuerst zeigen, dass mein Mandant zur Tatzeit gar nicht in Rom war, und dann, dass er kein Motiv hatte.“</summary>partitio – die Gliederung wird angekündigt.</details>
+  <details><summary>„Ihr, verehrte Richter, seid für eure Gerechtigkeit in ganz Rom bekannt …“</summary>exordium – captatio benevolentiae.</details>
+  <details><summary>„Der Ankläger behauptet, man habe ihn am Tatort gesehen. Doch der einzige Zeuge ist sein eigener Sklave!“</summary>refutatio – ein Argument des Gegners wird entkräftet.</details>
+  <details><summary>„Am Abend des dritten Tages verließ Sextus das Haus seines Vaters …“</summary>narratio – der Sachverhalt wird erzählt.</details>
+  <details><summary>„Denkt an seine alte Mutter, die vor euch steht! Sprecht ihn frei!“</summary>peroratio – Appell an die Gefühle zum Schluss.</details>
+  <details><summary>„Drei Zeugen bestätigen, dass er bei einem Gastmahl in Ameria war.“</summary>argumentatio – Beweis für die eigene Seite.</details>
+
+  <h3>Selbsttest</h3>
+  <details><summary>Nenne die sechs partes in der richtigen Reihenfolge.</summary>exordium – narratio – partitio – argumentatio – refutatio – peroratio</details>
+  <details><summary>Was ist die captatio benevolentiae und wo steht sie?</summary>Das Werben um das Wohlwollen der Zuhörer; im exordium.</details>
+  <details><summary>Was ist der Unterschied zwischen officia oratoris und partes orationis?</summary>Die officia sind die <i>Arbeitsschritte</i> des Redners (vom Finden bis zum Vortrag). Die partes sind die <i>Teile der fertigen Rede</i> – sie entstehen in der dispositio.</details>
+</section>
+
+<section id="p7" hidden>
+  <h2>Portion 7: Ciceros Leben</h2>
+  <p class="lead">Marcus Tullius Cicero (106–43 v. Chr.) – der berühmteste Redner Roms, Politiker und Philosoph.</p>
+  <ul class="plan"><li><b>8 Min</b>Zeitstrahl lesen</li><li><b>3 Min</b>Kernbegriffe</li><li><b>4 Min</b>Selbsttest</li></ul>
+  <ol class="time">
+    <li><b>106</b> Geboren am 3. Januar in Arpinum (Latium), in einer wohlhabenden Ritterfamilie – kein Adel.</li>
+    <li><b>ab ca. 90</b> Ausbildung in Rom: Recht, Rhetorik, Philosophie; 89 kurzer Militärdienst im Bundesgenossenkrieg.</li>
+    <li><b>80</b> Erster großer Prozess: Verteidigung des Sextus Roscius gegen einen Günstling Sullas – mutig und erfolgreich.</li>
+    <li><b>79–77</b> Studienreise nach Griechenland und Kleinasien, u. a. Rhetorikunterricht auf Rhodos.</li>
+    <li><b>75</b> Quästor in Sizilien – Beginn der Ämterlaufbahn (cursus honorum).</li>
+    <li><b>70</b> Anklage gegen Verres, den ausbeuterischen Statthalter Siziliens (Reden „In Verrem“). Cicero gilt danach als bester Redner Roms.</li>
+    <li><b>66</b> Prätor.</li>
+    <li><b>63</b> Konsul – als <i>homo novus</i>. Er deckt die Verschwörung des Catilina auf (Reden „In Catilinam“). Am 5. Dezember lässt er fünf gefangene Verschwörer hinrichten – gestützt auf einen Senatsbeschluss, aber ohne Gerichtsverfahren. Ehrentitel <i>pater patriae</i>.</li>
+    <li><b>58–57</b> Verbannung: Sein Gegner, der Volkstribun Clodius, bringt ein Gesetz gegen die Hinrichtung römischer Bürger ohne Urteil ein; Cicero verlässt Rom im März 58. Im August 57 wird seine Rückkehr beschlossen, am 4. September 57 ist er wieder in Rom – nach rund 16 Monaten.</li>
+    <li><b>55–51</b> Wenig politischer Einfluss; Schriften „De oratore“, „De re publica“, „De legibus“.</li>
+    <li><b>51–50</b> Statthalter (Prokonsul) in Kilikien.</li>
+    <li><b>49–47</b> Bürgerkrieg: Cicero steht auf Seiten des Pompeius, wird nach dessen Niederlage von Caesar begnadigt.</li>
+    <li><b>46–44</b> Rückzug in die Philosophie; 45 stirbt seine Tochter Tullia. Viele Werke, z. B. „De officiis“.</li>
+    <li><b>44–43</b> Nach Caesars Ermordung: 14 „Philippische Reden“ gegen Marcus Antonius.</li>
+    <li><b>43</b> Das zweite Triumvirat setzt ihn auf die Proskriptionsliste. Am 7. Dezember wird er bei Formiae ermordet; Kopf und Hände werden auf dem Forum ausgestellt.</li>
+  </ol>
+  <h3>Kernbegriffe</h3>
+  <table class="stack"><thead><tr><th>Begriff</th><th>Bedeutung</th></tr></thead><tbody>
+    <tr><td>homo novus</td><td>„Neuer Mann“: erster seiner Familie, der in die hohen Ämter und den Senat aufsteigt – im engeren Sinn: der erste Konsul der Familie</td></tr>
+    <tr><td>cursus honorum</td><td>Ämterlaufbahn: Quästor → (Ädil) → Prätor → Konsul</td></tr>
+    <tr><td>pater patriae</td><td>„Vater des Vaterlandes“ – Ehrentitel nach 63</td></tr>
+    <tr><td>Proskription</td><td>Ächtungsliste: Wer draufstand, durfte straflos getötet werden, sein Vermögen wurde eingezogen</td></tr>
+    <tr><td>Optimaten</td><td>Politische Richtung, die die Macht des Senats verteidigte – Ciceros Seite</td></tr>
+  </tbody></table>
+  <div class="tip"><b>Leitmotiv merken:</b> Cicero kämpfte sein Leben lang mit dem Wort für die Republik – und verlor am Ende gegen die Männer mit den Armeen.</div>
+  <h3>Selbsttest</h3>
+  <details><summary>Warum war Ciceros Konsulat etwas Besonderes?</summary>Er war ein homo novus – niemand aus seiner Familie war vor ihm Konsul.</details>
+  <details><summary>Was geschah 63 v. Chr.?</summary>Konsulat; Aufdeckung der Catilinarischen Verschwörung; Hinrichtung der Verschwörer ohne Prozess; Titel pater patriae.</details>
+  <details><summary>Warum wurde Cicero 58 verbannt?</summary>Wegen der Hinrichtung römischer Bürger ohne Gerichtsurteil 63 – durchgesetzt von seinem Gegner Clodius.</details>
+  <details><summary>Gegen wen richten sich die „Philippischen Reden“ – und was folgte daraus?</summary>Gegen Marcus Antonius. Antonius ließ Cicero 43 auf die Proskriptionsliste setzen; Cicero wurde ermordet.</details>
+</section>
+
+<section id="p8" hidden>
+  <h2>Portion 8: Rom im 1. Jh. v. Chr.</h2>
+  <p class="lead">Das Jahrhundert, in dem die Republik in Bürgerkriegen zerbricht und Augustus den Prinzipat (die Kaiserzeit) begründet.</p>
+  <ul class="plan"><li><b>4 Min</b>Grundkonflikt</li><li><b>7 Min</b>Zeitstrahl</li><li><b>4 Min</b>Selbsttest</li></ul>
+  <h3>Der Grundkonflikt</h3>
+  <table class="stack"><thead><tr><th>Gruppe</th><th>Ziel</th><th>Bekannte Vertreter</th></tr></thead><tbody>
+    <tr><td>Optimaten</td><td>Macht des Senats und der alten Adelsfamilien sichern</td><td>Sulla, Cato d. J., Cicero</td></tr>
+    <tr><td>Popularen</td><td>Politik über die Volksversammlung, oft gegen den Senat</td><td>Marius, Clodius, Caesar</td></tr>
+  </tbody></table>
+  <p>Wichtig: Optimaten und Popularen waren keine Parteien im heutigen Sinn, sondern politische Richtungen bzw. Methoden.</p><p>Dazu kommt: Seit Marius (ab 107) werden auch besitzlose Bürger als Soldaten angeworben. Sie sind auf ihren Feldherrn angewiesen – für Beute und Land nach dem Dienst – und ihm oft treuer als dem Staat. Wer eine Armee hat, kann Politik mit Gewalt machen. (Wie weit das eine planmäßige „Heeresreform“ war, ist in der Forschung umstritten.)</p>
+  <ol class="time">
+    <li><b>91–88</b> Bundesgenossenkrieg: Italische Verbündete kämpfen um das römische Bürgerrecht – und bekommen es.</li>
+    <li><b>88–82</b> Bürgerkrieg zwischen Sulla und Marius bzw. dessen Anhängern. 88 marschiert Sulla als erster Römer mit seinem Heer auf Rom. Marius stirbt im Januar 86; seine Partei (u. a. Cinna, Carbo) kämpft weiter, bis Sulla 82 siegt.</li>
+    <li><b>82–79</b> Sulla Diktator (wann genau er abdankte, ist umstritten; 80 ist er zusätzlich Konsul, 79 zieht er sich ins Privatleben zurück): Proskriptionen, Stärkung des Senats.</li>
+    <li><b>73–71</b> Sklavenaufstand des Spartacus, niedergeschlagen von Crassus.</li>
+    <li><b>70</b> Pompeius und Crassus Konsuln.</li>
+    <li><b>67–63</b> Pompeius besiegt die Seeräuber und König Mithridates; Neuordnung des Ostens.</li>
+    <li><b>63</b> Ciceros Konsulat; Verschwörung des Catilina.</li>
+    <li><b>60</b> Erstes Triumvirat: privates Bündnis von Caesar, Pompeius und Crassus.</li>
+    <li><b>59</b> Caesar Konsul.</li>
+    <li><b>58–51</b> Caesar erobert Gallien („De bello Gallico“).</li>
+    <li><b>53</b> Crassus fällt gegen die Parther bei Carrhae – das Triumvirat zerbricht.</li>
+    <li><b>49</b> Caesar überschreitet den Rubikon: Bürgerkrieg gegen Pompeius und den Senat.</li>
+    <li><b>48</b> Sieg Caesars bei Pharsalos; Pompeius wird in Ägypten ermordet.</li>
+    <li><b>44</b> Caesar Diktator auf Lebenszeit; an den Iden des März (15.3.) ermordet.</li>
+    <li><b>43</b> Zweites Triumvirat: Octavian, Antonius, Lepidus – anders als das erste per Gesetz als offizielles Amt eingerichtet. Proskriptionen – Ciceros Tod.</li>
+    <li><b>42</b> Schlacht bei Philippi: Sieg über die Caesarmörder Brutus und Cassius.</li>
+    <li><b>31</b> Seeschlacht bei Actium: Octavian besiegt Antonius und Kleopatra.</li>
+    <li><b>27</b> Octavian erhält den Namen Augustus – Beginn des Prinzipats.</li>
+  </ol>
+  <div class="tip"><b>Muster zum Merken:</b> Zweimal dasselbe Spiel – Dreierbündnis → Streit → Bürgerkrieg → einer bleibt übrig.<br>
+  1. Triumvirat (Caesar, Pompeius, Crassus) → Caesar.<br>2. Triumvirat (Octavian, Antonius, Lepidus) → Octavian/Augustus.</div>
+  <h3>Selbsttest</h3>
+  <details><summary>Worin unterscheiden sich Optimaten und Popularen?</summary>Optimaten stützen sich auf den Senat, Popularen auf die Volksversammlung.</details>
+  <details><summary>Warum wurden Feldherren nach Marius so gefährlich für die Republik?</summary>Die Berufssoldaten waren ihrem Feldherrn treu, nicht dem Staat – Feldherren konnten mit ihren Heeren Politik erzwingen.</details>
+  <details><summary>Wer bildete das erste, wer das zweite Triumvirat?</summary>1. (60): Caesar, Pompeius, Crassus. 2. (43): Octavian, Antonius, Lepidus.</details>
+  <details><summary>Was bedeutet „den Rubikon überschreiten“?</summary>49 v. Chr. führte Caesar sein Heer über den Grenzfluss nach Italien – Beginn des Bürgerkriegs. Heute: eine Entscheidung treffen, die man nicht mehr rückgängig machen kann.</details>
+  <details><summary>Welche Ereignisse markieren das Ende der Republik?</summary>Die Schlacht bei Actium (31) und die Verleihung des Namens Augustus an Octavian (27).</details>
+</section>
+</main>
+
+<script>
+{
+const Q=[
+["Alliteration","„Milch macht müde Männer munter.“ – Welches Stilmittel?","Alliteration",["Anapher","Homoioteleuton","Hyperbaton"],"Mehrere Wörter mit gleichem Anlaut (m-)."],
+["Alliteration","Welches Stilmittel: Aufeinanderfolgende Wörter haben den gleichen Anlaut.","Alliteration",["Homoioteleuton","Anapher","Polysyndeton"],"Alliteration = gleicher Anfangslaut. Gleiche Endung wäre Homoioteleuton."],
+["Alliteration","„Ceterum censeo Carthaginem esse delendam.“ – Welche Wörter bilden die Alliteration?","ceterum – censeo – Carthaginem",["esse – delendam","censeo – esse","Carthaginem – delendam"],"Alle drei beginnen mit dem gleichen Laut [k]."],
+["Anapher","„Scipio Carthaginem delevit, Scipio Numantiam sustulit, Scipio pacem peperit …“ – Welches Stilmittel?","Anapher",["Chiasmus","Homoioteleuton","Hendiadyoin"],"Gleiches Wort am Anfang aufeinanderfolgender Sätze."],
+["Anapher","Welches Stilmittel: Am Anfang von Sätzen oder Satzteilen wird das gleiche Wort wiederholt.","Anapher",["Alliteration","Parallelismus","Polysyndeton"],"Anapher (griech. ana = wieder)."],
+["Anapher","„Das Wasser rauscht', das Wasser schwoll …“ (Goethe) – Welches Stilmittel?","Anapher",["Asyndeton","Chiasmus","Metapher"],"„Das Wasser“ steht zweimal am Anfang."],
+["Homoioteleuton","„Quod licet Iovi, non licet bovi.“ – Welches Stilmittel steckt in Iovi / bovi?","Homoioteleuton",["Alliteration","Anapher","Hendiadyoin"],"Gleich klingende Endungen (-ovi)."],
+["Homoioteleuton","Welches Stilmittel: Wortspiel mit gleich klingenden Endungen (oft als Reim).","Homoioteleuton",["Alliteration","Anapher","Hyperbaton"],"Gleiches Ende = Homoioteleuton; gleicher Anfang wäre Alliteration."],
+["Homoioteleuton","Was bedeutet der Name „Homoioteleuton“ wörtlich?","gleiches Ende",["gleicher Anfang","viele Verbindungen","eins durch zwei"],"homoios = gleich, teleute = Ende."],
+["Asyndeton","„Alles rennet, rettet, flüchtet.“ (Schiller) – Welches Stilmittel?","Asyndeton",["Polysyndeton","Hendiadyoin","Chiasmus"],"Aufzählung ohne Konjunktion."],
+["Asyndeton","Welches Stilmittel: unverbundene Aneinanderreihung von Wörtern oder Satzteilen, ohne Konjunktion.","Asyndeton",["Polysyndeton","Parallelismus","Trikolon"],"a- = nicht, syndeton = verbunden."],
+["Asyndeton","Jemand übersetzt „Veni, vidi, vici“ mit „Ich kam und sah und siegte“. Welches Stilmittel geht dabei verloren?","Asyndeton",["Hyperbaton","Metapher","Chiasmus"],"Durch das eingefügte „und“ ist die Aufzählung nicht mehr unverbunden."],
+["Polysyndeton","„Et avus et frater et pater et liberi ad villam properaverunt.“ – Welches Stilmittel?","Polysyndeton",["Asyndeton","Hendiadyoin","Chiasmus"],"Die Konjunktion „et“ wird mehrfach wiederholt."],
+["Polysyndeton","Welches Stilmittel: Eine Konjunktion wird mehrfach wiederholt.","Polysyndeton",["Asyndeton","Anapher","Hendiadyoin"],"poly = viel, syndeton = verbunden."],
+["Polysyndeton","Welche Wirkung hat ein Polysyndeton typischerweise?","Jedes Glied wird einzeln betont, die Aufzählung wirkt breit und eindringlich.",["Die Aufzählung wirkt knapp und gehetzt.","Zwei Wörter verschmelzen zu einem Begriff.","Zusammengehörige Wörter werden getrennt."],"Knapp und gehetzt wäre eher das Asyndeton."],
+["Parallelismus","„Max putzt die Küche, Lisa saugt das Wohnzimmer.“ – Welches Stilmittel?","Parallelismus",["Chiasmus","Klimax","Anapher"],"Gleicher Satzbau: Subjekt – Verb – Objekt, zweimal."],
+["Parallelismus","Welches Schema beschreibt einen Parallelismus?","A – B / A – B",["A – B / B – A","A … (Einschub) … A","A – A – A"],"Gleiche Reihenfolge in beiden Teilen. A-B / B-A wäre der Chiasmus."],
+["Parallelismus","„Concordia parvae res crescunt, discordia maximae dilabuntur.“ – Welches Stilmittel prägt den Satzbau?","Parallelismus",["Chiasmus","Hyperbaton","Metapher"],"Beide Hälften: Ablativ – Adjektiv – (res) – Verb."],
+["Chiasmus","„Concordia maxima, minima avaritia.“ – Welches Stilmittel?","Chiasmus",["Parallelismus","Anapher","Hendiadyoin"],"Nomen – Adjektiv / Adjektiv – Nomen: Überkreuzstellung."],
+["Chiasmus","Woher hat der Chiasmus seinen Namen?","Vom griechischen Buchstaben Χ (Chi) – wegen der Überkreuzstellung",["Vom lateinischen clamare (rufen)","Vom griechischen Wort für „drei“","Von einem Redner namens Chiasmos"],"Verbindet man die zusammengehörigen Wörter, entsteht ein X."],
+["Chiasmus","„Die Kunst ist lang, und kurz ist unser Leben.“ (Goethe) – Welches Stilmittel?","Chiasmus",["Parallelismus","Anapher","Hendiadyoin"],"Kunst – lang / kurz – Leben: A-B / B-A."],
+["Hyperbaton","Welches Stilmittel: Trennung zusammengehörender Wörter.","Hyperbaton",["Hyperbel","Asyndeton","Chiasmus"],"Vorsicht: Die Hyperbel ist die Übertreibung."],
+["Hyperbaton","„Brevis a natura nobis vita data est.“ – Welche zusammengehörigen Wörter sind getrennt?","brevis … vita",["natura … nobis","a … natura","data … est"],"Adjektiv brevis gehört zu vita."],
+["Hyperbaton","Hyperbel heißt Übertreibung. Und was ist ein Hyperbaton?","Trennung zusammengehöriger Wörter",["Übertreibung","Wiederholung am Satzanfang","Überkreuzstellung"],"hyper-bainein = darübersteigen: Man „steigt“ über Wörter hinweg."],
+["Trikolon","Welches Stilmittel: Aufzählung aus drei Teilen.","Trikolon",["Klimax","Polysyndeton","Hendiadyoin"],"tri = drei, kolon = Glied."],
+["Trikolon","„Veni, vidi, vici.“ – Was macht den Satz zu einem Trikolon?","Es sind drei gleichartige Glieder.",["Die Wörter beginnen alle mit v.","Es fehlt jede Konjunktion.","Die Wörter stehen über Kreuz."],"Die anderen Merkmale stimmen teils auch – sie beschreiben aber Alliteration und Asyndeton."],
+["Trikolon","Welche Wendung ist ein Trikolon?","„Glaube, Liebe, Hoffnung“",["„Glanz und Gloria“","„vi et armis“","„in Grund und Boden“"],"Nur hier sind es drei Glieder."],
+["Klimax","„Catilina abiit, excessit, evasit, erupit.“ – Welches Stilmittel beschreibt die Abfolge der Verben?","Klimax",["Polysyndeton","Hendiadyoin","Chiasmus"],"Stufenartige Steigerung: ging → machte sich fort → entfloh → stürzte davon."],
+["Klimax","Was bedeutet das griechische Wort „klimax“?","Leiter / Treppe",["Kreuz","Ende","drei"],"Wie auf einer Leiter geht es Stufe für Stufe nach oben."],
+["Klimax","„Er sei mein Freund, mein Engel, mein Gott.“ (Schiller) – Was macht die Stelle zur Klimax?","die Steigerung Freund → Engel → Gott",["das dreimal wiederholte „mein“","die gleichen Endungen","ein bildhafter Ausdruck"],"Das wiederholte „mein“ wäre die Anapher."],
+["Metapher","„faex civitatis“ – „die Hefe (= der Abschaum) des Volkes“. Welches Stilmittel?","Metapher",["Hendiadyoin","Klimax","Alliteration"],"Bildhafter Ausdruck in übertragener Bedeutung."],
+["Metapher","Welches Stilmittel: bildhafter Ausdruck, der nicht wörtlich, sondern übertragen gemeint ist.","Metapher",["Hyperbel","Hendiadyoin","Hyperbaton"],"meta-pherein = hinübertragen."],
+["Metapher","Welche Wendung ist eine Metapher?","„die Wogen des Schicksals“",["„Glanz und Gloria“","„Alles rennet, rettet, flüchtet“","„in Grund und Boden“"],"Das Schicksal hat keine echten Wellen – ein Bild."],
+["Hendiadyoin","„vi et armis“ – „mit Waffengewalt“. Welches Stilmittel?","Hendiadyoin",["Polysyndeton","Parallelismus","Homoioteleuton"],"Zwei Wörter drücken einen verstärkten Begriff aus."],
+["Hendiadyoin","Was bedeutet „Hendiadyoin“ wörtlich?","eins durch zwei",["gleiches Ende","viel verbunden","über Kreuz"],"hen dia dyoin (griech.)."],
+["Hendiadyoin","Welche Wendung ist ein Hendiadyoin?","„jemanden in Grund und Boden reden“",["„Milch macht müde Männer munter“","„Ich kam, sah und siegte“","„die Wogen des Schicksals“"],"Grund und Boden: zwei fast gleiche Wörter, ein verstärkter Begriff."]
+];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const T=document.getElementById('tafel');
+let run=[],i=0,score=0,wrong=[];
+function start(list){run=shuffle(list).map(q=>({q,opts:shuffle([q[2],...q[3]])}));i=0;score=0;wrong=[];show()}
+function show(){
+  const r=run[i];
+  T.innerHTML=`<div class="meta"><span>Frage ${i+1} von ${run.length}</span><span>Richtig: ${score}</span></div>
+  <div class="bar"><i style="width:${i/run.length*100}%"></i></div>
+  <div class="q">${esc(r.q[1])}</div>
+  <div class="opts">${r.opts.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}</div>
+  <div id="fb"></div>`;
+  T.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>pick(+b.dataset.k)));
+  T.querySelector('.opt').focus({preventScroll:true});
+}
+function pick(k){
+  const r=run[i],ok=r.opts[k]===r.q[2];
+  if(ok)score++;else wrong.push(r.q);
+  T.querySelectorAll('.opt').forEach((b,n)=>{b.disabled=true;if(r.opts[n]===r.q[2])b.classList.add('ok');else if(n===k)b.classList.add('bad')});
+  const last=i===run.length-1;
+  document.getElementById('fb').innerHTML=`<div class="fb"><b>${ok?'Richtig!':'Leider nicht.'}</b> ${ok?'':`Richtig ist: <b>${esc(r.q[2])}</b>. `}${esc(r.q[4])}<br><small>Stilmittel: ${esc(r.q[0])}</small></div>
+  <div class="row"><button class="btn" id="next">${last?'Auswertung':'Weiter'}</button></div>`;
+  const n=document.getElementById('next');n.addEventListener('click',()=>{if(last)end();else{i++;show()}});n.focus({preventScroll:true});
+  T.querySelector('.meta span:last-child').textContent='Richtig: '+score;
+}
+function end(){
+  const pct=Math.round(score/run.length*100);
+  const by={};wrong.forEach(q=>by[q[0]]=(by[q[0]]||0)+1);
+  const weak=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+  T.innerHTML=`<div class="score">${score} / ${run.length}</div><p>${pct} % richtig. ${pct===100?'Perfekt – alle Stilmittel sitzen.':pct>=80?'Sehr gut! Nur noch wenige Lücken.':'Weiter üben – mit „Nur Fehler wiederholen“ geht es gezielt.'}</p>
+  ${weak.length?`<h3>Noch üben</h3><ul class="wrong">${weak.map(([s,n])=>`<li><b>${esc(s)}</b> – ${n} Fehler</li>`).join('')}</ul>`:''}
+  <div class="row"><button class="btn" id="again">Neuer Durchgang (alle 36)</button>
+  <button class="btn alt" id="short">Kurzrunde: 12 Fragen</button>
+  ${wrong.length?'<button class="btn alt" id="err">Nur Fehler wiederholen</button>':''}</div>`;
+  document.getElementById('again').addEventListener('click',()=>start(Q));
+  document.getElementById('short').addEventListener('click',startShort);
+  const e=document.getElementById('err');if(e){const w=wrong.slice();e.addEventListener('click',()=>start(w))}
+}
+function startShort(){const g={};shuffle(Q).forEach(q=>{if(!g[q[0]])g[q[0]]=q});start(Object.values(g))}
+function intro(){
+  T.innerHTML=`<p class="q">Wie viel Zeit hast du?</p>
+  <div class="row"><button class="btn" id="full">Alle 36 Fragen (ca. 15 Min)</button><button class="btn alt" id="sh">Kurzrunde: 12 Fragen, je Stilmittel eine zufällige</button></div>`;
+  document.getElementById('full').addEventListener('click',()=>start(Q));
+  document.getElementById('sh').addEventListener('click',startShort);
+}
+intro();
+const views=['quiz','p4','p5','p6','p7','p8'];
+function route(){
+  const h=location.hash.slice(1),v=views.includes(h)?h:'quiz';
+  views.forEach(id=>document.getElementById(id).hidden=id!==v);
+  document.querySelectorAll('#nav a').forEach(a=>a.setAttribute('aria-current',a.getAttribute('href')==='#'+v));
+}
+addEventListener('hashchange',()=>{route();scrollTo(0,0)});route();
+}
+</script>
+</body>
+</html>
